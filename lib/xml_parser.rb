@@ -7,9 +7,7 @@ class XMLParser
     doc = REXML::Document.new(file)
     file.close
 
-    questions = []
-
-    doc.elements.each('questions/question') do |questions_element|
+    doc.elements.to_a('questions/question').map do |questions_element|
       text = ''
       variants = []
       right_answer = 0
@@ -29,8 +27,7 @@ class XMLParser
           right_answer = variants.find_index(right_answer)
         end
       end
-      questions << Question.new(text, variants, right_answer, points, seconds)
-    end
-    questions.shuffle!
+      Question.new(text, variants, right_answer, points, seconds)
+    end.shuffle!
   end
 end
