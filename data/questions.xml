@@ -1,7 +1,7 @@
 <questions>
   <question seconds='15' points='5'>
     <text>Сколько байт в килобайте?</text>
-    <variants>1024
+    <variants>
       <variant right='true'>1024</variant>
       <variant>1000</variant>
       <variant>8</variant>

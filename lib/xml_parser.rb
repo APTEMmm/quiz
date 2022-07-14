@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'question'
 require 'rexml/document'
 
@@ -8,25 +10,13 @@ class XMLParser
     file.close
 
     doc.elements.to_a('questions/question').map do |questions_element|
-      text = ''
-      variants = []
-      right_answer = 0
+      text = questions_element.elements['text'].text
+      variants_array = questions_element.elements.to_a('variants/variant').shuffle!
+      variants = variants_array.map(&:text)
+      right_answer = variants.find_index(variants_array.select { |variant| variant.attributes['right'] == 'true' }[0]
+                                                       .text)
       points = questions_element.attributes['points'].to_i
       seconds = questions_element.attributes['seconds'].to_i
-
-      questions_element.elements.each do |question_element|
-        case question_element.name
-        when 'text'
-          text = question_element.text
-        when 'variants'
-          question_element.elements.each do |variant|
-            variants << variant.text
-            right_answer = variant.text if variant.attributes['right']
-          end
-          variants.shuffle!
-          right_answer = variants.find_index(right_answer)
-        end
-      end
       Question.new(text, variants, right_answer, points, seconds)
     end.shuffle!
   end
